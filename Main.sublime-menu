@@ -1,43 +1,31 @@
 [
     {
+        "id": "preferences", 
         "children": [
             {
                 "caption": "-"
             }, 
             {
+                "caption": "UI Language", 
                 "id": "locale", 
                 "children": [
                     {
-                        "command": "locale", 
-                        "id": "en", 
                         "caption": "English", 
                         "checkbox": false, 
-                        "args": {
-                            "locale": "en"
-                        }
+                        "command": "english_locale"
                     }, 
                     {
-                        "command": "locale", 
-                        "id": "zh_CN", 
                         "caption": "简体中文", 
                         "checkbox": false, 
-                        "args": {
-                            "locale": "zh_CN"
-                        }
+                        "command": "simplified_chinese_locale"
                     }, 
                     {
-                        "command": "locale", 
-                        "id": "zh_TW", 
                         "caption": "繁體中文", 
                         "checkbox": false, 
-                        "args": {
-                            "locale": "zh_TW"
-                        }
+                        "command": "traditional_chinese_locale"
                     }
-                ], 
-                "caption": "界面语言"
+                ]
             }
-        ], 
-        "id": "preferences"
+        ]
     }
 ]

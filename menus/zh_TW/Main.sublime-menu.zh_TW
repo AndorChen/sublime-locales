@@ -274,7 +274,7 @@
 			{ "caption": "-", "id": "permute" },
 
 			{ "command": "sort_lines", "args": {"case_sensitive": false}, "caption": "按行排序(S)", "mnemonic": "S" },
-			{ "command": "sort_lines", "args": {"case_sensitive": true}, "caption": "按行排序(大小寫敏感)" },
+			{ "command": "sort_lines", "args": {"case_sensitive": true}, "caption": "按行排序(區分大小寫)" },
 			{
 				"caption": "整理行的排序",
 				"children":
@@ -289,7 +289,7 @@
 				"children":
 				[
 					{ "command": "sort_selection", "args": {"case_sensitive": false}, "caption": "排序" },
-					{ "command": "sort_selection", "args": {"case_sensitive": true}, "caption": "行排序(大小寫敏感)" },
+					{ "command": "sort_selection", "args": {"case_sensitive": true}, "caption": "行排序(區分大小寫)" },
 					{ "command": "permute_selection", "args": {"operation": "reverse"}, "caption": "反轉" },
 					{ "command": "permute_selection", "args": {"operation": "unique"}, "caption": "去重復" },
 					{ "command": "permute_selection", "args": {"operation": "shuffle"}, "caption": "隨機打亂" }
@@ -330,7 +330,7 @@
 			{ "command": "find_prev", "caption": "查找上一個" },
 			{ "command": "show_panel", "args": {"panel": "incremental_find", "reverse": false}, "caption": "漸進式查找" },
 			{ "caption": "-" },
-			{ "command": "show_panel", "args": {"panel": "replace"}, "caption": "查找替換…" },
+			{ "command": "show_panel", "args": {"panel": "replace"}, "caption": "替換…" },
 			{ "command": "replace_next", "caption": "替換下一個" },
 			{ "caption": "-" },
 			{ "command": "find_under", "caption": "快速查找" },

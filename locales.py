@@ -1,126 +1,153 @@
 # -*- coding: utf-8 -*-
 
 import sublime
-import sublime_plugin
 
-import os
-import os.path
-import shutil
-import json
-import tempfile
-import codecs
+if int(sublime.version()) > 2999:
+    message = u"Locales plugin only support Sublime Text 2, do not install in Sublime Text 3 Beta."
+    sublime.error_message(message)
+else:
+    import sublime_plugin
 
-class LocaleCommand(sublime_plugin.ApplicationCommand):
-	def run(self, **args):
-		new_locale = args['locale']
+    import os
+    import os.path
+    import shutil
+    import json
+    import tempfile
+    import codecs
 
-		s = sublime.load_settings(setting_file())
-		old_locale = locale_in_settings(s)
+    installed_dir = os.path.basename(os.getcwd())
 
-		# if not old_locale in all_locales():
-		# 	return
+    class Locale(object):
+        def __init__(self, locale):
+            self.locale = locale
 
-		if new_locale == old_locale:
-			return
-		else:
-			replace_menu_files_from(new_locale)
-			set_current_locale(s, new_locale)
-			# toggle_checked(new_locale)
-			update_caption(new_locale)
+        def run(self):
+            s = sublime.load_settings(setting_file())
+            old_locale = locale_in_settings(s)
 
-	def is_checked(self):
-		return False
+            # if not old_locale in all_locales():
+            #     return
 
-def setting_file():
-	return "Preferences.sublime-settings"
+            if self.locale == old_locale:
+                return
+            else:
+                replace_menu_files_from(self.locale)       
+                update_caption(self.locale)
+                set_current_locale(s, self.locale)
 
-def default_package_dir():
-	return os.path.join(sublime.packages_path(), 'Default')
+        def is_checked(self):
+            s = sublime.load_settings(setting_file())
+            if locale_in_settings(s) == self.locale:
+                return True
+            else:
+                return False
 
-def current_dir():
-	return os.path.join(sublime.packages_path(), os.path.dirname(__file__))
+    class EnglishLocaleCommand(sublime_plugin.ApplicationCommand):
+        def __init__(self):
+            self.locale = Locale('en')
 
-def menus_dir():
-	return os.path.join(current_dir(), 'menus')
+        def run(self):
+            self.locale.run()
 
-def locale_dir(locale):
-	return os.path.join(menus_dir(), locale)
+        def is_checked(self):
+            return self.locale.is_checked()
 
-def locale_in_settings(settings):
-	return settings.get('locale', 'en')
+    class SimplifiedChineseLocaleCommand(sublime_plugin.ApplicationCommand):
+        def __init__(self):
+            self.locale = Locale('zh_CN')
 
-def set_current_locale(settings, locale):
-	settings.set("locale", locale)
-	sublime.save_settings(setting_file())
+        def run(self):
+            self.locale.run()
 
-def all_locales():
-	return [ name for name in os.listdir(menus_dir()) if os.path.isdir(os.path.join(menus_dir(), name)) ]
+        def is_checked(self):
+            return self.locale.is_checked()
 
-def st_menu_files():
-	return [ 'Context', 'Find in Files', 'Indentation', 'Main', 'Side Bar Mount Point', 'Side Bar', 'Syntax', 'Tab Context', 'Widget Context' ]
+    class TraditionalChineseLocaleCommand(sublime_plugin.ApplicationCommand):
+        def __init__(self):
+            self.locale = Locale('zh_TW')
 
-def replace_menu_files_from(locale):
-	if not os.path.isdir(default_package_dir()):
-		os.mkdir(default_package_dir())
+        def run(self):
+            self.locale.run()
 
-	for m in st_menu_files():
-		locale_file = os.path.join(locale_dir(locale), m + ".sublime-menu." + locale )
-		if not os.path.isfile(locale_file):
-			continue
-		else:
-			shutil.copyfile(locale_file, os.path.join(default_package_dir(), m + ".sublime-menu"))
+        def is_checked(self):
+            return self.locale.is_checked()
 
-CAPTIONS = {
-	'en':    'UI Language',
-	'zh_CN': u'界面语言',
-	'zh_TW': u'界面語言'
-}
+    def setting_file():
+        return "Preferences.sublime-settings"
 
-def update_caption(locale):
-	path = os.path.join(current_dir(), 'Main.sublime-menu')
-	menu = read_json(path)
-	menu[0]['children'][1]['caption'] = CAPTIONS[locale]
-	write_json(path, menu)
+    def default_package_dir():
+        return os.path.join(sublime.packages_path(), 'Default')
 
+    def current_dir():
+        return os.path.join(sublime.packages_path(), installed_dir)
 
-def toggle_checked(locale):
-	path = os.path.join(current_dir(), 'Main.sublime-menu')
-	menu = read_json(path)
-	locale_items = menu[0]['children'][1]['children']
+    def menus_dir():
+        return os.path.join(current_dir(), 'menus')
 
-	for item in locale_items:
-		item['checkbox'] = False
+    def locale_dir(locale):
+        return os.path.join(menus_dir(), locale)
 
-		if item['id'] == locale:
-			item['checkbox'] = True
+    def locale_in_settings(settings):
+        return settings.get('locale', 'en')
 
-	write_json(path, menu)
+    def set_current_locale(settings, locale):
+        settings.set("locale", locale)
+        sublime.save_settings(setting_file())
 
-def read_json(path):
-	fd = codecs.open(path, 'rb', 'utf-8')
-	data = fd.read()
-	deserial = json.loads(data)
-	fd.close()
+    def all_locales():
+        return [ name for name in os.listdir(menus_dir()) if os.path.isdir(os.path.join(menus_dir(), name)) ]
 
-	return deserial
+    def st_menu_files():
+        return [ 'Context', 'Find in Files', 'Indentation', 'Main', 'Side Bar Mount Point', 'Side Bar', 'Syntax', 'Tab Context', 'Widget Context' ]
 
-def write_json(path, data):
-	serial = json.dumps(data, ensure_ascii = False, indent = 4).encode('utf-8')
-	temp = tempfile.NamedTemporaryFile('wb', dir = os.path.dirname(__file__), delete = False)
-	tempname = temp.name
+    def replace_menu_files_from(locale):
+        if not os.path.isdir(default_package_dir()):
+            os.mkdir(default_package_dir())
 
-	temp.write(serial)
-	temp.close()
+        for m in st_menu_files():
+            locale_file = os.path.join(locale_dir(locale), m + ".sublime-menu." + locale )
+            if not os.path.isfile(locale_file):
+                continue
+            else:
+                shutil.copyfile(locale_file, os.path.join(default_package_dir(), m + ".sublime-menu"))
 
-	shutil.move(tempname, path)
+    CAPTIONS = {
+        'en':    'UI Language',
+        'zh_CN': u'界面语言',
+        'zh_TW': u'界面語言'
+    }
 
-def listener():
-	s = sublime.load_settings(setting_file())
-	s.add_on_change('locale', update_preference)
+    def update_caption(locale):
+        path = os.path.join(current_dir(), 'Main.sublime-menu')
+        menu = read_json(path)
+        menu[0]['children'][1]['caption'] = CAPTIONS[locale]
+        write_json(path, menu)
 
-def update_preference():
-	locale = locale_in_settings(sublime.load_settings(setting_file()))
-	replace_menu_files_from(locale)
-	update_caption(locale)
+    def read_json(path):
+        fd = codecs.open(path, 'rb', 'utf-8')
+        data = fd.read()
+        deserial = json.loads(data)
+        fd.close()
 
-listener()
+        return deserial
+
+    def write_json(path, data):
+        serial = json.dumps(data, ensure_ascii = False, indent = 4).encode('utf-8')
+        temp = tempfile.NamedTemporaryFile('wb', dir = os.path.dirname(__file__), delete = False)
+        tempname = temp.name
+
+        temp.write(serial)
+        temp.close()
+
+        shutil.move(tempname, path)
+
+    def listener():
+        s = sublime.load_settings(setting_file())
+        s.add_on_change('locale', update_preference)
+
+    def update_preference():
+        locale = locale_in_settings(sublime.load_settings(setting_file()))
+        replace_menu_files_from(locale)
+        update_caption(locale)
+
+    listener()
