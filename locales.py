@@ -15,14 +15,17 @@ else:
     import tempfile
     import codecs
 
+    __version__   = '0.0.1'
+    __author__    = 'Andor Chen'
     installed_dir = os.path.basename(os.getcwd())
+    setting_file  = "Preferences.sublime-settings"
 
     class Locale(object):
         def __init__(self, locale):
             self.locale = locale
 
         def run(self):
-            s = sublime.load_settings(setting_file())
+            s = sublime.load_settings(setting_file)
             old_locale = locale_in_settings(s)
 
             # if not old_locale in all_locales():
@@ -31,12 +34,12 @@ else:
             if self.locale == old_locale:
                 return
             else:
-                replace_menu_files_from(self.locale)       
+                replace_menu_files_from(self.locale)
                 update_caption(self.locale)
                 set_current_locale(s, self.locale)
 
         def is_checked(self):
-            s = sublime.load_settings(setting_file())
+            s = sublime.load_settings(setting_file)
             if locale_in_settings(s) == self.locale:
                 return True
             else:
@@ -72,9 +75,6 @@ else:
         def is_checked(self):
             return self.locale.is_checked()
 
-    def setting_file():
-        return "Preferences.sublime-settings"
-
     def default_package_dir():
         return os.path.join(sublime.packages_path(), 'Default')
 
@@ -92,7 +92,7 @@ else:
 
     def set_current_locale(settings, locale):
         settings.set("locale", locale)
-        sublime.save_settings(setting_file())
+        sublime.save_settings(setting_file)
 
     def all_locales():
         return [ name for name in os.listdir(menus_dir()) if os.path.isdir(os.path.join(menus_dir(), name)) ]
@@ -142,11 +142,11 @@ else:
         shutil.move(tempname, path)
 
     def listener():
-        s = sublime.load_settings(setting_file())
+        s = sublime.load_settings(setting_file)
         s.add_on_change('locale', update_preference)
 
     def update_preference():
-        locale = locale_in_settings(sublime.load_settings(setting_file()))
+        locale = locale_in_settings(sublime.load_settings(setting_file))
         replace_menu_files_from(locale)
         update_caption(locale)
 
