@@ -15,7 +15,7 @@ else:
     import tempfile
     import codecs
 
-    __version__   = '0.0.1'
+    __version__   = '0.0.2'
     __author__    = 'Andor Chen'
     installed_dir = os.path.basename(os.getcwd())
     setting_file  = "Preferences.sublime-settings"
