@@ -18,7 +18,9 @@ A plugin to locale your Sublime Text UI.
 
 ### Package Control
 
-TODO
+1. Press `ctrl+shift+p` (Win, Linux) or `cmd+shift+p` (OS X), open the pallete
+2. Type in "pckinstall", and press `Enter`
+3. Type in "Locales", and press `Enter`
 
 ## Usage
 
